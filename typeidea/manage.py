@@ -6,11 +6,11 @@ import django
 
 from django.conf import settings
 
-settings.configure(DEBUG=True)
+# settings.configure(DEBUG=True)
 
 
 def main():
-    profile = os.environ.get('TYPEIDEA_PROFILE', 'base')
+    profile = os.environ.get('TYPEIDEA_PROFILE', 'develop')
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'typeidea.settings.%s' % profile)
     try:
         from django.core.management import execute_from_command_line
