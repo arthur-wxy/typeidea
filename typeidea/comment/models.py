@@ -1,4 +1,4 @@
-from typeidea.blog.models import Post
+from blog.models import Post
 from django.db import models
 
 
