@@ -51,6 +51,10 @@ class PostAdmin(admin.ModelAdmin):
         'title', 'category', 'status',
         'created_time', 'operator',
     ]
+
+    def save_model(self, reuset):
+        pass
+
     list_display_links = []
 
     list_filter = [CategoryOwnerFilter]
