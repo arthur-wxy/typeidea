@@ -4,6 +4,7 @@ from django.utils.html import format_html
 
 from .models import Post, Category, Tag
 from .adminforms import PostAdminForm
+from typeidea.custom_site import custom_site
 
 
 @admin.register(Category)
@@ -47,7 +48,7 @@ class CategoryOwnerFilter(admin.SimpleListFilter):
         return queryset
 
 
-@admin.register(Post)
+@admin.register(Post, site=custom_site)
 class PostAdmin(admin.ModelAdmin):
     form = PostAdminForm
 
@@ -105,23 +106,34 @@ class PostAdmin(admin.ModelAdmin):
         })
     )
 
-    filter_horizontal = ('tag', )  # 配置横向展示
+    filter_horizontal = ('tag',)  # 配置横向展示
+
     # filter_vertical = ('')  # 纵向展示
 
     class Media:
         """引用静态资源"""
         css = {
-            'all': ("https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css", ),
+            'all': ("https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css",),
         }
-        js = ('https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.js', )
+        js = ('https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.js',)
 
     def operator(self, obj):
         return format_html(
             '<a href="{}">编辑</a>',
-            reverse('admin:blog_post_change', args=(obj.id, ))
+            reverse('cus_admin:blog_post_change', args=(obj.id,))
         )
+
     operator.short_description = '操作'
 
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
         return super(PostAdmin, self).save_model(request, obj, form, change)
+
+# class PostInline(admin.TabularInline):
+#     fields = ('title', 'desc')
+#     extra = 1
+#     model = Post
+#
+#
+# class CategoryAdmin(admin.ModelAdmin):
+#     inlines = [PostInline, ]
