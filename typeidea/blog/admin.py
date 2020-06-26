@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from .models import Post, Category, Tag
+from .adminforms import PostAdminForm
 
 
 @admin.register(Category)
@@ -48,13 +49,20 @@ class CategoryOwnerFilter(admin.SimpleListFilter):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
+    form = PostAdminForm
+
     list_display = [
         'title', 'category', 'status',
         'created_time', 'operator',
     ]
 
-    def save_model(self, reuset):
-        pass
+    def save_model(self, request, obj, form, change):
+        obj.owner = request.user
+        return super(PostAdmin, self).save_model(request, obj, form, change)
+
+    def get_queryset(self, request):
+        qs = super(PostAdmin, self).get_queryset(request)
+        return qs.filter(owner=request.user)
 
     list_display_links = []
 
@@ -67,13 +75,45 @@ class PostAdmin(admin.ModelAdmin):
     # 编辑页面
     save_on_top = True
 
-    fields = (
-        ('category', 'title'),
-        'desc',
-        'status',
-        'content',
-        'tag',
+    exclude = ('owner',)
+
+    # fields = (
+    #     ('category', 'title'),
+    #     'desc',
+    #     'status',
+    #     'content',
+    #     'tag',
+    # )
+    #
+    fieldsets = (
+        ('基础配置', {
+            'description': '基础配置描述',
+            'fields': (
+                ('title', 'category'),
+                'status',
+            ),
+        }),
+        ('内容', {
+            'fields': (
+                'desc',
+                'content',
+            ),
+        }),
+        ('额外信息', {
+            'classes': ('collapse',),
+            'fields': ('tag',),
+        })
     )
+
+    filter_horizontal = ('tag', )  # 配置横向展示
+    # filter_vertical = ('')  # 纵向展示
+
+    class Media:
+        """引用静态资源"""
+        css = {
+            'all': ("https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css", ),
+        }
+        js = ('https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.js', )
 
     def operator(self, obj):
         return format_html(
