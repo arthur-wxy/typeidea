@@ -25,6 +25,9 @@ class Category(models.Model):
 
 
 class Tag(models.Model):
+
+    def __str__(self):
+        return self.name
     STATUS_NORMAL = 1
     STATUS_DELETE = 0
     STATUS_ITEMS = (
