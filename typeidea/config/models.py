@@ -27,6 +27,9 @@ class Link(models.Model):
 
 
 class SideBar(models.Model):
+
+    def __str__(self):
+        return self.name
     STATUS_SHOW = 1
     STATUS_HIDE = 0
     STATUS_ITEMS = (
