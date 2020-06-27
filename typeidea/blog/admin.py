@@ -5,16 +5,25 @@ from django.utils.html import format_html
 from .models import Post, Category, Tag
 from .adminforms import PostAdminForm
 from typeidea.custom_site import custom_site
+from typeidea.base_admin import BaseOwnerAdmin
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class PostInline(admin.TabularInline):
+
+    fields = ('title', 'desc')
+    extra = 1
+    model = Post
+
+
+@admin.register(Category, site=custom_site)
+class CategoryAdmin(BaseOwnerAdmin):
+    inlines = [PostInline, ]
     list_display = ('name', 'status', 'is_nav', 'created_time', 'post_count')
     fields = ('name', 'status', 'is_nav')
 
-    def save_model(self, request, obj, form, change):
-        obj.owner = request.user
-        return super(CategoryAdmin, self).save_model(request, obj, form, change)
+    # def save_model(self, request, obj, form, change):
+    #     obj.owner = request.user
+    #     return super(CategoryAdmin, self).save_model(request, obj, form, change)
 
     def post_count(self, obj):
         return obj.post_set.count()
@@ -22,14 +31,14 @@ class CategoryAdmin(admin.ModelAdmin):
     post_count.short_description = '文章数量'
 
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
+@admin.register(Tag, site=custom_site)
+class TagAdmin(BaseOwnerAdmin):
     list_display = ('name', 'status', 'created_time')
     fields = ('name', 'status')
 
-    def save_model(self, request, obj, form, change):
-        obj.owner = request.user
-        return super(TagAdmin, self).save_model(request, obj, form, change)
+    # def save_model(self, request, obj, form, change):
+    #     obj.owner = request.user
+    #     return super(TagAdmin, self).save_model(request, obj, form, change)
 
 
 class CategoryOwnerFilter(admin.SimpleListFilter):
@@ -49,9 +58,8 @@ class CategoryOwnerFilter(admin.SimpleListFilter):
 
 
 @admin.register(Post, site=custom_site)
-class PostAdmin(admin.ModelAdmin):
+class PostAdmin(BaseOwnerAdmin):
     form = PostAdminForm
-
     list_display = [
         'title', 'category', 'status',
         'created_time', 'operator',
@@ -67,7 +75,7 @@ class PostAdmin(admin.ModelAdmin):
 
     list_display_links = []
 
-    list_filter = [CategoryOwnerFilter]
+    list_filter = [CategoryOwnerFilter, ]
     search_fields = ['title', 'category_name']
 
     actions_on_top = True
@@ -76,7 +84,7 @@ class PostAdmin(admin.ModelAdmin):
     # 编辑页面
     save_on_top = True
 
-    exclude = ('owner',)
+    exclude = ['owner']
 
     fieldsets = (
         ('基础配置', {
@@ -93,7 +101,7 @@ class PostAdmin(admin.ModelAdmin):
             ),
         }),
         ('额外信息', {
-            'classes': ('collapse',),
+            'classes': ('wide',),
             'fields': ('tag',),
         })
     )
