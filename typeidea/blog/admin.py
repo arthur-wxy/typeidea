@@ -130,6 +130,12 @@ class PostAdmin(BaseOwnerAdmin):
         obj.owner = request.user
         return super(PostAdmin, self).save_model(request, obj, form, change)
 
+
+@admin.register(LogEntry, site=custom_site)
+class LogEntryAdmin(admin.ModelAdmin):
+    list_display = ['object_repr', 'object_id', 'action_flag', 'user', 'change_message']
+
+
 # class PostInline(admin.TabularInline):
 #     fields = ('title', 'desc')
 #     extra = 1
