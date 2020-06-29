@@ -6,6 +6,7 @@ from .models import Post, Category, Tag
 from .adminforms import PostAdminForm
 from typeidea.custom_site import custom_site
 from typeidea.base_admin import BaseOwnerAdmin
+from django.contrib.admin.models import LogEntry
 
 
 class PostInline(admin.TabularInline):
