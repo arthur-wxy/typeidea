@@ -6,6 +6,7 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
     STATUS_NORMAL = 1
     STATUS_DELETE = 0
     STATUS_ITEMS = (
@@ -36,8 +37,8 @@ class Category(models.Model):
         # nav_categories = categories.filter(is_nav=True)
         # normal_categories = categories.filter(is_nav=False)
         return {
-            'nav': nav_categories,
-            'catgories': normal_categories,
+            'navs': nav_categories,
+            'categories': normal_categories,
         }
 
 
@@ -45,6 +46,7 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
     STATUS_NORMAL = 1
     STATUS_DELETE = 0
     STATUS_ITEMS = (
@@ -94,8 +96,8 @@ class Post(models.Model):
             tag = None
             post_list = []
         else:
-            post_list = tag.post_set.filter(status=Post.STATUS_NORMAL)\
-            .select_related('owner', 'category')
+            post_list = tag.post_set.filter(status=Post.STATUS_NORMAL) \
+                .select_related('owner', 'category')
         return post_list, tag
 
     @staticmethod
@@ -104,9 +106,9 @@ class Post(models.Model):
             category = Category.objects.get(id=category_id)
         except Category.DoesNotExist:
             category = None
-            post_list =[]
+            post_list = []
         else:
-            post_list = Category.post_set.filter(status=Post.STATUS_NORMAL)\
+            post_list = Category.post_set.filter(status=Post.STATUS_NORMAL) \
                 .select_related('owner', 'category')
         return post_list, category
 
@@ -114,4 +116,3 @@ class Post(models.Model):
     def latest_posts(cls):
         queryset = cls.objects.filter(status=cls.STATUS_NORMAL)
         return queryset
-
