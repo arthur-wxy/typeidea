@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^tag/(?P<tag_id>\d+)/$', post_list),
     url(r'^post/(?P<post_id>\d+).html$', post_detail),
     url(r'links/$', links),
-    url(r'^', admin.site.urls),
-    url(r'^', custom_site.urls),
+    url(r'^super_admin/', admin.site.urls),
+    url(r'^admin/', custom_site.urls),
     # path('admin/', admin.site.urls),
 ]

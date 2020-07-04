@@ -47,6 +47,9 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+    pv = models.PositiveIntegerField(default=1)
+    uv = models.PositiveIntegerField(default=1)
+
     STATUS_NORMAL = 1
     STATUS_DELETE = 0
     STATUS_ITEMS = (
@@ -116,3 +119,7 @@ class Post(models.Model):
     def latest_posts(cls):
         queryset = cls.objects.filter(status=cls.STATUS_NORMAL)
         return queryset
+
+    @classmethod
+    def hot_posts(cls):
+        return cls.objects.filter(status=cls.STATUS_NORMAL).order_by('-pv')
