@@ -7,6 +7,7 @@ class Link(models.Model):
 
     def __str__(self):
         return self.name
+
     STATUS_NORMAL = 1
     STATUS_DELETE = 0
     STATUS_ITEMS = (
@@ -95,4 +96,5 @@ class SideBar(models.Model):
                 'comments': Comment.objects.filter(status=Comment.STATUS_NORMAL)
             }
             result = render_to_string('config/blocks/sidebar_comments.html', context)
+
         return result
